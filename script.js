@@ -26,46 +26,7 @@ async function loadModels() {
 
 loadModels();
 
-// 미디어 제어 (카메라/파일)
-btnCamera.addEventListener('click', async () => {
-    if (stream) {
-        stream.getTracks().forEach(track => track.stop());
-        stream = null;
-        video.classList.add('hidden');
-        placeholder.classList.remove('hidden');
-        btnCamera.innerHTML = '<i class="fas fa-video mr-2"></i> 카메라 켜기';
-        btnCapture.classList.add('hidden');
-    } else {
-        try {
-            // 카메라 제약 조건 강화 및 video.play() 명시적 호출
-            const constraints = { 
-                video: { 
-                    facingMode: "user",
-                    width: { ideal: 1280 },
-                    height: { ideal: 720 }
-                } 
-            };
-            stream = await navigator.mediaDevices.getUserMedia(constraints);
-            video.srcObject = stream;
-            
-            // 즉시 UI 업데이트하여 '사진 찍기' 버튼이 나오도록 보장
-            video.classList.remove('hidden');
-            imagePreview.classList.add('hidden');
-            placeholder.classList.add('hidden');
-            btnCapture.classList.remove('hidden'); 
-            btnCamera.innerHTML = '<i class="fas fa-video-slash mr-2"></i> 카메라 끄기';
-
-            // 비디오 로드 대기 후 재생
-            video.onloadedmetadata = () => {
-                video.play();
-            };
-        } catch (err) { 
-            console.error("Camera error:", err);
-            alert("카메라를 시작할 수 없습니다. 카메라 권한을 허용했는지 확인해 주세요."); 
-        }
-    }
-});
-
+// 파일 업로드 처리
 fileUpload.addEventListener('change', (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -75,8 +36,7 @@ fileUpload.addEventListener('change', (e) => {
             imagePreview.classList.remove('hidden');
             video.classList.add('hidden');
             placeholder.classList.add('hidden');
-            btnCapture.classList.remove('hidden');
-            if (stream) { stream.getTracks().forEach(track => track.stop()); stream = null; btnCamera.innerHTML = '<i class="fas fa-video mr-2"></i> 카메라 켜기'; }
+            btnCapture.classList.remove('hidden'); 
         };
         reader.readAsDataURL(file);
     }
