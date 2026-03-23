@@ -48,14 +48,16 @@ btnCamera.addEventListener('click', async () => {
             stream = await navigator.mediaDevices.getUserMedia(constraints);
             video.srcObject = stream;
             
+            // 즉시 UI 업데이트하여 '사진 찍기' 버튼이 나오도록 보장
+            video.classList.remove('hidden');
+            imagePreview.classList.add('hidden');
+            placeholder.classList.add('hidden');
+            btnCapture.classList.remove('hidden'); 
+            btnCamera.innerHTML = '<i class="fas fa-video-slash mr-2"></i> 카메라 끄기';
+
             // 비디오 로드 대기 후 재생
             video.onloadedmetadata = () => {
                 video.play();
-                video.classList.remove('hidden');
-                imagePreview.classList.add('hidden');
-                placeholder.classList.add('hidden');
-                btnCapture.classList.remove('hidden');
-                btnCamera.innerHTML = '<i class="fas fa-video-slash mr-2"></i> 카메라 끄기';
             };
         } catch (err) { 
             console.error("Camera error:", err);
