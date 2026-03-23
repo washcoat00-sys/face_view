@@ -37,14 +37,30 @@ btnCamera.addEventListener('click', async () => {
         btnCapture.classList.add('hidden');
     } else {
         try {
-            stream = await navigator.mediaDevices.getUserMedia({ video: true });
+            // 카메라 제약 조건 강화 및 video.play() 명시적 호출
+            const constraints = { 
+                video: { 
+                    facingMode: "user",
+                    width: { ideal: 1280 },
+                    height: { ideal: 720 }
+                } 
+            };
+            stream = await navigator.mediaDevices.getUserMedia(constraints);
             video.srcObject = stream;
-            video.classList.remove('hidden');
-            imagePreview.classList.add('hidden');
-            placeholder.classList.add('hidden');
-            btnCapture.classList.remove('hidden');
-            btnCamera.innerHTML = '<i class="fas fa-video-slash mr-2"></i> 카메라 끄기';
-        } catch (err) { alert("카메라 권한이 필요합니다."); }
+            
+            // 비디오 로드 대기 후 재생
+            video.onloadedmetadata = () => {
+                video.play();
+                video.classList.remove('hidden');
+                imagePreview.classList.add('hidden');
+                placeholder.classList.add('hidden');
+                btnCapture.classList.remove('hidden');
+                btnCamera.innerHTML = '<i class="fas fa-video-slash mr-2"></i> 카메라 끄기';
+            };
+        } catch (err) { 
+            console.error("Camera error:", err);
+            alert("카메라를 시작할 수 없습니다. 카메라 권한을 허용했는지 확인해 주세요."); 
+        }
     }
 });
 
